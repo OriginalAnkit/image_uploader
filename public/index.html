@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uploader</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="public/main.css">
+    <script src="public/main.js"></script>
+
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h3><u>Uploader</u></h3>
+        <form>
+            <div class="form-row">
+                <div class="col pt-2">
+                    <input type="file" placeholder="First name" >
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control" placeholder="Name of File">
+                </div>
+                <div class="col">
+                    <select class="form-control" >
+                        <option>Local</option>
+                        <option>Grid_Fs</option>
+                        <option>S3 </option>
+                    </select>
+                </div>
+                <button class="btn btn-primary">Upload</button>
+            </div>
+        </form>
+
+        <div class="uploaded-sec mt-5 row">
+
+        </div>
+    </div>
+
+</body>
+
+</html>
