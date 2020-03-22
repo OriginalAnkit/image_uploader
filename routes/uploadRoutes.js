@@ -4,6 +4,8 @@ const fs = require('fs');
 const mongoose = require('mongoose');
 const GridFsStorage = require('multer-gridfs-storage');
 const Grid = require('gridfs-stream');
+const multerS3 = require('multer-s3');
+const aws = require('aws-sdk');
 
 const constantServer = require("../constantServer")
 
@@ -44,6 +46,26 @@ const storageGFs = new GridFsStorage({
     }
 });
 
+//S3 config
+
+aws.config.update({
+    secretAccessKey: constantServer.S3Key,
+    accessKeyId: constantServer.S3Id,
+    region: constantServer.S3Region
+});
+
+const s3 = new aws.S3();
+
+const storageS3 = multerS3({
+    s3: s3,
+    bucket: constantServer.S3BucketName,
+    acl:"public-read",
+    key: function (req, file, cb) {
+        cb(null, "uploads/"+(req.body.name || Date.now()) + path.extname(file.originalname));
+    }
+})
+
+
 function postFile(req, res) {
 
     let type = req.params.type;
@@ -55,6 +77,8 @@ function postFile(req, res) {
         case "Grid_Fs":
             upload = multer({ storage: storageGFs })
             break;
+        case "S3":
+            upload = multer({ storage: storageS3 })
 
     }
     upload.single("file")(req, res, (e, d) => {
@@ -84,6 +108,21 @@ async function getUploadedFiles(req, res) {
                 }
             )
             break;
+        case "S3":
+            await new Promise(function(resolve,reject){
+                s3.listObjectsV2({
+                    Bucket:constantServer.S3BucketName,
+                    Prefix: 'uploads/',     
+                    MaxKeys:10000
+                },function(err,data){
+                    console.log(data)   
+                    data.Contents.forEach(d=>{
+                        let tmppath=`https://${constantServer.S3BucketName}.S3.${constantServer.S3Region}.amazonaws.com/${d.Key}`;
+                        fileUrl.push(tmppath)
+                        resolve()
+                    })
+                })  
+            })
     }
 
     res.json(
