@@ -1,4 +1,7 @@
 module.exports={
     PORT:9000,
-    MongoURL:""
+    MongoURL:"",
+    S3Id:"",
+    S3Key:"",
+    S3Region:""
 }
