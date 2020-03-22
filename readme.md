@@ -12,5 +12,4 @@ Uploader is an dummy project to upload files and retrieve images to
 Fill the constants in *constantServer.js*
 Run command *npm start*
 
-```
 ![screenshot](https://ibb.co/G77nVW1)
