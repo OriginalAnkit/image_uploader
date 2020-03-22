@@ -25,7 +25,14 @@ $(
             });
         })
 
-        getFiles()
+        getFiles();
+
+        $(document).find("select").change(
+            function(){
+               getFiles()
+               console.log("sdf")
+            }
+        )
 
     }
 )
@@ -34,7 +41,7 @@ $(
 getFiles = function () {
     $(".uploaded-sec").empty()
     $.ajax({
-        url: '/getfiles',
+        url: '/getfiles/'+$(document).find("select").val(),
         type: 'GET',
         success: function ({ data }) {
             data.forEach(

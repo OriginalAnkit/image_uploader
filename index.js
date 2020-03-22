@@ -13,9 +13,11 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 
 app.use("/public", express.static("./public"));
+
 app.get("/", publicRoute.renderPage);
-app.get("/getfiles",uploadRoutes.getUploadedFiles);
+app.get("/getfiles/:type",uploadRoutes.getUploadedFiles);
 app.post("/upload/:type",uploadRoutes.postFile);
+app.get("/gridfsimage/:name",uploadRoutes.getGridFile);
 
 app.listen(constantServer.PORT, function () {
     console.log(`listening at ${constantServer.PORT}`)
