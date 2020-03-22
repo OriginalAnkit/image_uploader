@@ -4,5 +4,5 @@ module.exports={
     S3Id:"",
     S3Key:"",
     S3Region:"",
-    S3BucketName:""
+    BucketName:""
 }
