@@ -26,6 +26,7 @@ $(
         })
 
         getFiles();
+        getActiveOptions()
 
         $(document).find("select").change(
             function(){
@@ -51,6 +52,21 @@ getFiles = function () {
                 }
 
             )
+        }
+    });
+}
+
+getActiveOptions=function(){
+    $.ajax({
+        url: '/activeoptions',
+        type: 'GET',
+        success: function ({ data }) {
+          if(!data.GridFS){
+            $("select option:contains('Grid_Fs')").attr("disabled","disabled");
+          }
+          if(!data.S3){
+            $("select option:contains('S3')").attr("disabled","disabled");
+          }
         }
     });
 }

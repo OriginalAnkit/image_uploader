@@ -15,6 +15,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use("/public", express.static("./public"));
 
 app.get("/", publicRoute.renderPage);
+app.get("/activeoptions",publicRoute.getActiveOptions)
 app.get("/getfiles/:type",uploadRoutes.getUploadedFiles);
 app.post("/upload/:type",uploadRoutes.postFile);
 app.get("/gridfsimage/:name",uploadRoutes.getGridFile);

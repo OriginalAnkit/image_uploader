@@ -24,46 +24,50 @@ const storageLocal = multer.diskStorage({
 })
 
 //gridfs config
-const conn = mongoose.createConnection(constantServer.MongoURL);
+if (constantServer.GridFS) {
 
-let gfs;
-conn.once('open', () => {
-    gfs = Grid(conn.db, mongoose.mongo);
-    gfs.collection('uploads');
-});
+    const conn = mongoose.createConnection(constantServer.MongoURL);
 
-const storageGFs = new GridFsStorage({
-    url: constantServer.MongoURL,
-    file: (req, file) => {
-        return new Promise((resolve, reject) => {
-            const filename = (req.body.name || Date.now()) + path.extname(file.originalname);
-            const fileInfo = {
-                filename: filename,
-                bucketName: 'uploads'
-            };
-            resolve(fileInfo);
-        });
-    }
-});
+    let gfs;
+    conn.once('open', () => {
+        gfs = Grid(conn.db, mongoose.mongo);
+        gfs.collection('uploads');
+    });
+
+    const storageGFs = new GridFsStorage({
+        url: constantServer.MongoURL,
+        file: (req, file) => {
+            return new Promise((resolve, reject) => {
+                const filename = (req.body.name || Date.now()) + path.extname(file.originalname);
+                const fileInfo = {
+                    filename: filename,
+                    bucketName: 'uploads'
+                };
+                resolve(fileInfo);
+            });
+        }
+    });
+}
 
 //S3 config
-
-aws.config.update({
-    secretAccessKey: constantServer.S3Key,
-    accessKeyId: constantServer.S3Id,
-    region: constantServer.S3Region
-});
-
-const s3 = new aws.S3();
-
-const storageS3 = multerS3({
-    s3: s3,
-    bucket: constantServer.S3BucketName,
-    acl:"public-read",
-    key: function (req, file, cb) {
-        cb(null, "uploads/"+(req.body.name || Date.now()) + path.extname(file.originalname));
-    }
-})
+if(constantServer.S3){
+    aws.config.update({
+        secretAccessKey: constantServer.S3Key,
+        accessKeyId: constantServer.S3Id,
+        region: constantServer.S3Region
+    });
+    
+    const s3 = new aws.S3();
+    
+    const storageS3 = multerS3({
+        s3: s3,
+        bucket: constantServer.S3BucketName,
+        acl: "public-read",
+        key: function (req, file, cb) {
+            cb(null, "uploads/" + (req.body.name || Date.now()) + path.extname(file.originalname));
+        }
+    })
+}
 
 
 function postFile(req, res) {
@@ -109,19 +113,19 @@ async function getUploadedFiles(req, res) {
             )
             break;
         case "S3":
-            await new Promise(function(resolve,reject){
+            await new Promise(function (resolve, reject) {
                 s3.listObjectsV2({
-                    Bucket:constantServer.S3BucketName,
-                    Prefix: 'uploads/',     
-                    MaxKeys:10000
-                },function(err,data){
-                    console.log(data)   
-                    data.Contents.forEach(d=>{
-                        let tmppath=`https://${constantServer.S3BucketName}.S3.${constantServer.S3Region}.amazonaws.com/${d.Key}`;
+                    Bucket: constantServer.S3BucketName,
+                    Prefix: 'uploads/',
+                    MaxKeys: 10000
+                }, function (err, data) {
+                    console.log(data)
+                    data.Contents.forEach(d => {
+                        let tmppath = `https://${constantServer.S3BucketName}.S3.${constantServer.S3Region}.amazonaws.com/${d.Key}`;
                         fileUrl.push(tmppath)
                         resolve()
                     })
-                })  
+                })
             })
     }
 
