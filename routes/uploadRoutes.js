@@ -10,7 +10,9 @@ const aws = require('aws-sdk');
 const constantServer = require("../constantServer")
 
 //Local dir config
+
 const uploadDir = path.join(__dirname, '../public/uploads')
+fs.mkdirSync(uploadDir, { recursive: true })
 
 const storageLocal = multer.diskStorage({
     destination: function (req, file, cb) {
